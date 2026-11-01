@@ -5,169 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fast Proxy Check - MB Checker</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f7f7f7;
-            margin: 0;
-            padding: 15px;
-            color: #333;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: #fff;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-        }
-        h2 {
-            text-align: center;
-            color: #ff8c00;
-            font-size: 22px;
-            margin-bottom: 20px;
-        }
-        .providers {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .provider-card {
-            border: 2px solid #eee;
-            border-radius: 8px;
-            padding: 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .provider-card.active {
-            border-color: #ff8c00;
-            background-color: #fff9f0;
-        }
-        .provider-card h4 {
-            margin: 0;
-            font-size: 14px;
-        }
-        .input-group {
-            margin-bottom: 15px;
-        }
-        textarea {
-            width: 100%;
-            height: 100px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            resize: none;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        .btn-check {
-            width: 100%;
-            background: linear-gradient(135deg, #ff8c00, #ffaa00);
-            color: white;
-            border: none;
-            padding: 12px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-        }
-        .result-box {
-            margin-top: 20px;
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #eee;
-            display: none;
-        }
-        .result-stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            text-align: center;
-        }
-        .stat-card {
-            background: #fff;
-            padding: 8px;
-            border-radius: 6px;
-            border: 1px solid #ddd;
-            flex: 1;
-            margin: 0 4px;
-        }
-        .stat-card span {
-            display: block;
-            font-weight: bold;
-            font-size: 16px;
-        }
+        body { font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 15px; color: #333; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        h2 { text-align: center; color: #ff8c00; font-size: 22px; margin-bottom: 20px; }
+        .providers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .provider-card { border: 2px solid #eee; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
+        .provider-card.active { border-color: #ff8c00; background-color: #fff9f0; }
+        .provider-card h4 { margin: 0; font-size: 14px; }
+        .input-group { margin-bottom: 15px; }
+        textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; resize: none; font-size: 14px; box-sizing: border-box; }
+        .btn-check { width: 100%; background: linear-gradient(135deg, #ff8c00, #ffaa00); color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; text-align: center; }
+        .result-box { margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee; display: none; }
+        .result-stats { display: flex; justify-content: space-between; margin-bottom: 10px; text-align: center; }
+        .stat-card { background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #ddd; flex: 1; margin: 0 4px; }
+        .stat-card span { display: block; font-weight: bold; font-size: 16px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <h2>Fast Proxy MB Checker</h2>
-
-    <!-- Providers Selection -->
     <div class="providers">
-        <div class="provider-card">
-            <h4>H143 Proxy</h4>
-        </div>
-        <div class="provider-card active" id="9proxy-select">
-            <h4>9Proxy (Selected)</h4>
-        </div>
+        <div class="provider-card"><h4>H143 Proxy</h4></div>
+        <div class="provider-card active" id="9proxy-select"><h4>9Proxy (Selected)</h4></div>
     </div>
-
-    <!-- Proxy Input Form -->
     <div class="input-group">
         <label for="proxyInput" style="font-size: 13px; color: #666; display: block; margin-bottom: 5px;">Paste proxies (user / user:password)</label>
         <textarea id="proxyInput" placeholder="p5527meaook_T5Ue-country-AF-..."></textarea>
     </div>
-
     <button class="btn-check" onclick="checkMbBalance()">Q Check MB</button>
-
-    <!-- Results Section -->
     <div class="result-box" id="resultBox">
         <div class="result-stats">
             <div class="stat-card" style="color: green;">FOUND <span id="foundCount">1</span></div>
             <div class="stat-card" style="color: red;">FAILED <span id="failCount">0</span></div>
-            <div class="stat-card" style="color: #ff8c00;">TOTAL LEFT <span id="totalLeft">100 MB</span></div>
+            <div class="stat-card" style="color: #ff8c00;">TOTAL LEFT <span id="totalLeft">0 MB</span></div>
         </div>
         <div id="proxyDetails" style="background: #fff; padding: 10px; border-radius: 6px; font-size: 13px; border: 1px solid #ddd;">
             <b>Status:</b> <span style="color: green;">ACTIVE</span><br>
-            <b>Remaining:</b> <span id="remMb">100 MB</span>
+            <b>Remaining:</b> <span id="remMb">0 MB</span>
         </div>
     </div>
 </div>
 
 <script>
-    // আপনার কনফিগার করা API Key এবং Bot Token এখানে সংরক্ষিত আছে
     const apiKey = "3873a942a458600bebf58923b8163e04";
-    const botToken = "9069019839:AAF59laqL8Lco6VSeDdtZY53UE2m0jyMF1Q";
 
-    function checkMbBalance() {
+    async function checkMbBalance() {
         const inputVal = document.getElementById('proxyInput').value.trim();
         if(!inputVal) {
             alert("দয়া করে প্রক্সি ইউজারনেম অথবা ডিটেইলস দিন!");
             return;
         }
-
-        // রেজাল্ট বক্স প্রদর্শন করা
         document.getElementById('resultBox').style.display = 'block';
-        
-        // রিয়েল-টাইম বা সিমুলেটেড API চেকিং লজিক (এখানে 9Proxy API রিকোয়েস্ট হ্যান্ডেল করা হয়েছে)
-        fetch(`https://9proxy.com/api/v1/sub-user/balance?key=${apiKey}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${apiKey}`
+
+        try {
+            const response = await fetch(`https://9proxy.com/api/v1/sub-user/balance?key=${apiKey}`, {
+                method: 'GET',
+                headers: { 'Authorization': `Bearer ${apiKey}` }
+            });
+            const data = await response.json();
+            
+            if (data.code === 200 && data.data) {
+                const remainingMb = data.data; 
+                document.getElementById('remMb').innerText = remainingMb + ' MB';
+                document.getElementById('totalLeft').innerText = remainingMb + ' MB';
+            } else {
+                document.getElementById('remMb').innerText = 'Error';
+                document.getElementById('totalLeft').innerText = '0 MB';
             }
-        })
-        .then(response => response.json())
-        .catch(error => {
-            // যদি সরাসরি ব্রাউজার থেকে CORS প্রবলেম হয়, তবে ইউজারদের সুবিধার জন্য ডিফল্ট ভিউ বা সফল রেসপন্স দেখাবে
-            console.log("API Connected via Token structure.");
-        });
+        } catch (error) {
+            document.getElementById('remMb').innerText = 'Error';
+            document.getElementById('totalLeft').innerText = '0 MB';
+        }
     }
 </script>
 
 </body>
 </html>
+

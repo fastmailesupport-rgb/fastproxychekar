@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>9Proxy Balance Checker</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        input { padding: 10px; width: 300px; }
+        button { padding: 10px; }
+        #result { margin-top: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>9Proxy Balance Checker</h2>
+    <input type="text" id="apiKey" placeholder="Enter your 9Proxy API Key">
+    <br><br>
+    <button onclick="checkBalance()">Check Balance</button>
+    <div id="result"></div>
+    <script>
+        function checkBalance() {
+            const apiKey = document.getElementById('apiKey').value;
+            const resultDiv = document.getElementById('result');
+            if(!apiKey) { resultDiv.innerText = "Please enter an API key."; return; }
+            resultDiv.innerText = "Checking...";
+            fetch(`http://ip.9proxy.com/balance?key=${apiKey}`)
+            .then(response => response.json())
+            .then(data => {
+                if(data.code === 200) resultDiv.innerText = `Balance: ${data.data}`;
+                else resultDiv.innerText = "Failed to retrieve balance. Check your API key.";
+            })
+            .catch(error => resultDiv.innerText = "Error connecting to API.");
+        }
+    </script>
+</body>
+</html>

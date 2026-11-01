@@ -1,103 +1,39 @@
-<!DOCTYPE html>
-<html lang="bn">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fast Proxy Check - MB Checker</title>
-    <style>
-        body { font-family: Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 15px; color: #333; }
-        .container { max-width: 500px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
-        h2 { text-align: center; color: #ff8c00; font-size: 22px; margin-bottom: 20px; }
-        .providers { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .provider-card { border: 2px solid #eee; border-radius: 8px; padding: 10px; text-align: center; cursor: pointer; transition: all 0.3s ease; }
-        .provider-card.active { border-color: #ff8c00; background-color: #fff9f0; }
-        .provider-card h4 { margin: 0; font-size: 14px; }
-        .input-group { margin-bottom: 15px; }
-        textarea { width: 100%; height: 100px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; resize: none; font-size: 14px; box-sizing: border-box; }
-        .btn-check { width: 100%; background: linear-gradient(135deg, #ff8c00, #ffaa00); color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 8px; cursor: pointer; text-align: center; }
-        .result-box { margin-top: 20px; background: #f9f9f9; padding: 15px; border-radius: 8px; border: 1px solid #eee; display: none; }
-        .result-stats { display: flex; justify-content: space-between; margin-bottom: 10px; text-align: center; }
-        .stat-card { background: #fff; padding: 8px; border-radius: 6px; border: 1px solid #ddd; flex: 1; margin: 0 4px; }
-        .stat-card span { display: block; font-weight: bold; font-size: 16px; }
-    </style>
-</head>
-<body>
+const apiKey = "3873a942a458600bebf58923b8163e04";
 
-<div class="container">
-    <h2>Fast Proxy MB Checker</h2>
-    <div class="providers">
-        <div class="provider-card"><h4>H143 Proxy</h4></div>
-        <div class="provider-card active" id="9proxy-select"><h4>9Proxy (Selected)</h4></div>
-    </div>
-    <div class="input-group">
-        <label for="proxyInput" style="font-size: 13px; color: #666; display: block; margin-bottom: 5px;">Paste proxy (username or full string)</label>
-        <textarea id="proxyInput" placeholder="niceproxy.io:17521:mv28_sjk0..."></textarea>
-    </div>
-    <button class="btn-check" onclick="checkMbBalance()">Q Check MB</button>
-    <div class="result-box" id="resultBox">
-        <div class="result-stats">
-            <div class="stat-card" style="color: green;">FOUND <span id="foundCount">1</span></div>
-            <div class="stat-card" style="color: red;">FAILED <span id="failCount">0</span></div>
-            <div class="stat-card" style="color: #ff8c00;">TOTAL LEFT <span id="totalLeft">0 MB</span></div>
-        </div>
-        <div id="proxyDetails" style="background: #fff; padding: 10px; border-radius: 6px; font-size: 13px; border: 1px solid #ddd;">
-            <b>Status:</b> <span style="color: green;" id="proxyStatus">ACTIVE</span><br>
-            <b>Remaining / Usage:</b> <span id="remMb">Loading...</span>
-        </div>
-    </div>
-</div>
-
-<script>
-    const apiKey = "3873a942a458600bebf58923b8163e04";
-
-    async function checkMbBalance() {
-        const inputVal = document.getElementById('proxyInput').value.trim();
-        if(!inputVal) {
-            alert("দয়া করে প্রক্সি ইউজারনেম দিন!");
-            return;
-        }
-
-        // Extract base sub-user username (e.g., mv28_sjk0 from mv28_sjk0-ssid-...)
-        let rawUser = inputVal;
-        if (inputVal.includes(':')) {
-            const parts = inputVal.split(':');
-            rawUser = parts.length >= 3 ? parts[2] : parts[0];
-        }
-        const cleanUser = rawUser.split('-')[0].trim();
-
-        document.getElementById('resultBox').style.display = 'block';
-        document.getElementById('remMb').innerText = 'Checking real-time data...';
-
-        // Direct & Proxy fallback endpoints
-        const targetUrl = `https://9proxy.com/api/v1/sub-user/list?key=${apiKey}`;
-        const corsProxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
-
-        try {
-            let response = await fetch(corsProxyUrl);
-            let data = await response.json();
-
-            if (data && data.data && Array.isArray(data.data)) {
-                // Find matching user
-                const matchedUser = data.data.find(u => u.username === cleanUser || cleanUser.includes(u.username));
-
-                if (matchedUser) {
-                    const used = matchedUser.gb_used || "0 MB";
-                    const limit = matchedUser.gb_limit || "Unlimited";
-                    
-                    document.getElementById('remMb').innerText = `${used} used (Limit: ${limit})`;
-                    document.getElementById('totalLeft').innerText = `${used}`;
-                    document.getElementById('proxyStatus').innerText = matchedUser.status === 1 ? 'ACTIVE' : 'ACTIVE';
-                } else {
-                    document.getElementById('remMb').innerText = `User (${cleanUser}) not found in API list`;
-                }
-            } else {
-                document.getElementById('remMb').innerText = 'API response error';
-            }
-        } catch (error) {
-            document.getElementById('remMb').innerText = 'Connection Error / CORS blocked';
-        }
+async function checkMbBalance() {
+    const inputVal = document.getElementById('proxyInput').value.trim();
+    if(!inputVal) {
+        alert("দয়া করে প্রক্সি দিন!");
+        return;
     }
-</script>
 
-</body>
-</html>
+    let rawUser = inputVal;
+    if (inputVal.includes(':')) {
+        const parts = inputVal.split(':');
+        rawUser = parts.length >= 3 ? parts[2] : parts[0];
+    }
+    const cleanUser = rawUser.split('-')[0].trim();
+
+    document.getElementById('resultBox').style.display = 'block';
+    document.getElementById('remMb').innerText = 'Loading...';
+
+    const targetUrl = `https://9proxy.com/api/v1/sub-user/list?key=${apiKey}`;
+    const proxyUrl = `https://corsproxy.io/?` + encodeURIComponent(targetUrl);
+
+    try {
+        let response = await fetch(proxyUrl);
+        let data = await response.json();
+
+        if (data && data.data) {
+            const matchedUser = data.data.find(u => u.username === cleanUser || cleanUser.includes(u.username));
+            if (matchedUser) {
+                document.getElementById('remMb').innerText = `${matchedUser.gb_used || 0} MB used`;
+                document.getElementById('totalLeft').innerText = `${matchedUser.gb_used || 0} MB`;
+            } else {
+                document.getElementById('remMb').innerText = `User not found`;
+            }
+        }
+    } catch (error) {
+        document.getElementById('remMb').innerText = 'API Fetch Failed (Block)';
+    }
+}
